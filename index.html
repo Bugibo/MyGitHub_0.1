@@ -52,20 +52,37 @@
         function createNewCode() {
             var codeName = document.getElementById('code-name').value;
             var codeContent = document.getElementById('code-input').value;
-
+        
             if (codeName || codeContent) {
                 // Если есть текущий код, добавить его в сохраненные коды
                 var savedCodeContainer = document.getElementById('saved-codes-container');
                 var newCodeElement = document.createElement('div');
                 newCodeElement.innerHTML = '<strong>' + codeName + ':</strong><br>' + codeContent + '<hr>';
                 savedCodeContainer.appendChild(newCodeElement);
+        
+                // Изменить URL страницы
+                window.history.pushState({ codeName: codeName, codeContent: codeContent }, codeName, '?code=' + encodeURIComponent(codeName));
             }
+        
+            // Очистить текущие значения
+            document.getElementById('code-name').value = '';
+            document.getElementById('code-input').value = '';
+            document.getElementById('result-container').innerHTML = '';
+        }
+        
+        // Загрузка сохраненных данных при загрузке страницы
+        window.onload = function () {
+            // Получение параметров из URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var savedCodeName = urlParams.get('code');
+            var savedCodeContent = localStorage.getItem('codeContent');
+        
+            if (savedCodeName && savedCodeContent) {
+                document.getElementById('code-name').value = savedCodeName;
+                document.getElementById('code-input').value = savedCodeContent;
+            }
+        }
 
-                // Очистить текущие значения
-                document.getElementById('code-name').value = '';
-                document.getElementById('code-input').value = '';
-                document.getElementById('result-container').innerHTML = '';
-            }
 
 
         function saveCode() {
