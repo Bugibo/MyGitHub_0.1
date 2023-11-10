@@ -20,7 +20,9 @@
     <h1>Код Сохранятор</h1>
     
     <button onclick="createNewCode()">Новый код</button>
-    
+    <button onclick="saveCode()">Сохранить</button>
+    <button onclick="runCode()">Запустить</button>
+
     <div id="code-container">
         <label for="code-name">Название кода:</label>
         <input type="text" id="code-name">
@@ -28,12 +30,15 @@
         <label for="code-input">Ваш код:</label>
         <textarea id="code-input" rows="10"></textarea>
         <br>
-        <button onclick="saveCode()">Сохранить</button>
+        <div id="result-container"></div>
     </div>
 
     <div id="saved-codes-container">
         <!-- Здесь будут отображаться сохраненные коды -->
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/0.10.1/skulpt.min.js" integrity="sha512-sOjv9oCXmr/P4nHLJz7WRSXw0tYoM8hLF6wPFpg6VlFXLY+umRY3xcwZ2bofZZlJw2qVR8b/S9wJ5Iw8U7cMBA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/0.10.1/skulpt-stdlib.js" integrity="sha512-iwzz7PVFrxDGLCtdLoi6CPOqPNO65wT+Se+T+a/jtpi7aNy1I6eH3iY2u3y4N2hY8FRdFjtTjhxI8bwuKz4YlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         window.addEventListener('beforeunload', function (e) {
@@ -47,6 +52,7 @@
         function createNewCode() {
             document.getElementById('code-name').value = '';
             document.getElementById('code-input').value = '';
+            document.getElementById('result-container').innerHTML = '';
         }
 
         function saveCode() {
@@ -69,6 +75,30 @@
             savedCodeContainer.appendChild(newCodeElement);
         }
 
+        function runCode() {
+            var codeContent = document.getElementById('code-input').value;
+
+            if (!codeContent) {
+                alert('Введите код перед запуском.');
+                return;
+            }
+
+            // Очистка предыдущего результата
+            document.getElementById('result-container').innerHTML = '';
+
+            // Запуск кода с использованием Skulpt
+            try {
+                Sk.configure({ output: function (text) { document.getElementById('result-container').innerHTML += text + '\n'; } });
+                Sk.misceval.asyncToPromise(function () {
+                    return Sk.importMainWithBody("<stdin>", false, codeContent, true);
+                }).catch(function (err) {
+                    console.error('Ошибка выполнения кода:', err);
+                });
+            } catch (error) {
+                console.error('Ошибка Skulpt:', error);
+            }
+        }
+
         // Загрузка сохраненных данных при загрузке страницы
         window.onload = function () {
             var savedCodeName = localStorage.getItem('codeName');
@@ -82,4 +112,3 @@
     </script>
 </body>
 </html>
-    
