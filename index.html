@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Код Сохранятор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #code-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Код Сохранятор</h1>
+    
+    <button onclick="createNewCode()">Новый код</button>
+    
+    <div id="code-container">
+        <label for="code-name">Название кода:</label>
+        <input type="text" id="code-name">
+        <br>
+        <label for="code-input">Ваш код:</label>
+        <textarea id="code-input" rows="10"></textarea>
+        <br>
+        <button onclick="saveCode()">Сохранить</button>
+    </div>
+
+    <div id="saved-codes-container">
+        <!-- Здесь будут отображаться сохраненные коды -->
+    </div>
+
+    <script>
+        window.addEventListener('beforeunload', function (e) {
+            if (localStorage.getItem('codeName') || localStorage.getItem('codeContent')) {
+                var confirmationMessage = 'Вы точно хотите выйти? Все несохраненные изменения будут потеряны.';
+                e.returnValue = confirmationMessage; // Стандарт для большинства браузеров
+                return confirmationMessage; // Для старых браузеров
+            }
+        });
+
+        function createNewCode() {
+            document.getElementById('code-name').value = '';
+            document.getElementById('code-input').value = '';
+        }
+
+        function saveCode() {
+            var codeName = document.getElementById('code-name').value;
+            var codeContent = document.getElementById('code-input').value;
+
+            if (!codeName || !codeContent) {
+                alert('Введите название и код перед сохранением.');
+                return;
+            }
+
+            // Сохранение данных в локальное хранилище
+            localStorage.setItem('codeName', codeName);
+            localStorage.setItem('codeContent', codeContent);
+
+            // Отображение сохраненного кода
+            var savedCodeContainer = document.getElementById('saved-codes-container');
+            var newCodeElement = document.createElement('div');
+            newCodeElement.innerHTML = '<strong>' + codeName + ':</strong><br>' + codeContent + '<hr>';
+            savedCodeContainer.appendChild(newCodeElement);
+        }
+
+        // Загрузка сохраненных данных при загрузке страницы
+        window.onload = function () {
+            var savedCodeName = localStorage.getItem('codeName');
+            var savedCodeContent = localStorage.getItem('codeContent');
+
+            if (savedCodeName && savedCodeContent) {
+                document.getElementById('code-name').value = savedCodeName;
+                document.getElementById('code-input').value = savedCodeContent;
+            }
+        }
+    </script>
+</body>
+</html>
+    
