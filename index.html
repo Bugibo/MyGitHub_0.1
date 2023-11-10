@@ -50,10 +50,23 @@
         });
 
         function createNewCode() {
-            document.getElementById('code-name').value = '';
-            document.getElementById('code-input').value = '';
-            document.getElementById('result-container').innerHTML = '';
-        }
+            var codeName = document.getElementById('code-name').value;
+            var codeContent = document.getElementById('code-input').value;
+
+            if (codeName || codeContent) {
+                // Если есть текущий код, добавить его в сохраненные коды
+                var savedCodeContainer = document.getElementById('saved-codes-container');
+                var newCodeElement = document.createElement('div');
+                newCodeElement.innerHTML = '<strong>' + codeName + ':</strong><br>' + codeContent + '<hr>';
+                savedCodeContainer.appendChild(newCodeElement);
+            }
+
+                // Очистить текущие значения
+                document.getElementById('code-name').value = '';
+                document.getElementById('code-input').value = '';
+                document.getElementById('result-container').innerHTML = '';
+            }
+
 
         function saveCode() {
             var codeName = document.getElementById('code-name').value;
